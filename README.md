@@ -4,9 +4,7 @@
 
 ## 📌 Descrição
 
-Este sistema de RH tem como objetivo facilitar a gestão de colaboradores, com funcionalidades como consulta de usuários, cadastro, atualização, exclusão e, futuramente, controle de cargos, departamentos e permissões.
-
-Atualmente, o projeto conta com a estrutura do banco de dados e parte da API backend construída com Spring Boot. O frontend está planejado para ser desenvolvido com Vue 3 + BootstrapVue.
+Sistema web para gestão de colaboradores, permitindo cadastrar, consultar, atualizar e remover funcionários, com backend em Spring Boot e MySQL já implementados e frontend planejado em Vue 3 com BootstrapVue.
 
 ## ⚙️ Tecnologias Utilizadas
 

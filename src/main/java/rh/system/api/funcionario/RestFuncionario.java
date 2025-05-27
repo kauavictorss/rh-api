@@ -20,22 +20,33 @@ public class RestFuncionario {
     @PostMapping("/cadastrar")
     public void cadastrar(@RequestBody DtoCadastroFuncionario dados) {
         log.info("Cadastrando funcionário");
+        if (dados.idade() < 18) {
+            log.error("Erro ao cadastrar!");
+            throw new RuntimeException("Funcionário menor de idade");
+        } else {
+            log.info("Funcionário maior de idade");
+        }
         repositorio.save(new Funcionario(dados));
         log.info("Funcionário cadastrado com sucesso!");
     }
 
     @GetMapping("/listar")
-    public List<DtoListaFuncionario> listar() {
+    public List<DtoListaFuncionario> listarFuncionarios() {
         return repositorio.findAll().stream().map(DtoListaFuncionario::new).toList();
     }
 
-    /*
-    Métod no serviço para atualizar o salário
-    public void atualizarSalario(int cpf, double novoSalario) {
-    Funcionario funcionario = funcionarioRepository.findById(cpf)
-        .orElseThrow(() -> new RuntimeException("Funcionário não encontrado"));
-    funcionario.getConta().setSalario(novoSalario);
-    funcionarioRepository.save(funcionario);
+    @GetMapping("/listar/cpf/{cpf}")
+    public List<DtoListaFuncionario> buscarPorCpf(@PathVariable String cpf) {
+        return repositorio.findById(cpf).stream().map(
+                funcionario -> new DtoListaFuncionario(cpf, funcionario))
+                .toList();
     }
-    */
+
+    @GetMapping("/listar/{especialidade}")
+    public List<DtoListaFuncionario> listarPorEspecialidade(@PathVariable String especialidade) {
+        return repositorio.buscarPorEspecialidade(List.of(especialidade))
+            .stream()
+            .map(DtoListaFuncionario::new)
+            .toList();
+    }
 }
