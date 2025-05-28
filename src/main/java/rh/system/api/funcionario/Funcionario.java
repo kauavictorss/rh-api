@@ -7,6 +7,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import rh.system.api.conta.Conta;
 import rh.system.api.endereco.Endereco;
+import rh.system.api.funcionario.dto.DtoAtualizarFuncionario;
 import rh.system.api.funcionario.dto.DtoCadastroFuncionario;
 
 @Entity
@@ -42,5 +43,26 @@ public class Funcionario {
         this.conta = new Conta(dados.conta());
         this.especialidade = dados.especialidade();
         this.endereco = new Endereco(dados.endereco());
+    }
+
+    public void atualizarDados(DtoAtualizarFuncionario dados) {
+        if (dados.nome() != null) {
+            this.nome = dados.nome();
+        }
+        if (dados.idade() != null) {
+            this.idade = dados.idade();
+        }
+        if (dados.email() != null) {
+            this.email = dados.email();
+        }
+        if (dados.especialidade() != null) {
+            this.especialidade = dados.especialidade();
+        }
+        if (dados.conta() != null) {
+            this.conta.atualizarConta(dados.conta());
+        }
+        if (dados.endereco() != null) {
+            this.endereco.atualizarEndereco(dados.endereco());
+        }
     }
 }
