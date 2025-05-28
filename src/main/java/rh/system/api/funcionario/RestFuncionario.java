@@ -29,6 +29,12 @@ public class RestFuncionario {
         } else {
             log.info("Funcionário maior de idade");
         }
+        if (repositorio.existsById(dados.cpf())) {
+            log.error("Erro ao cadastrar!");
+            throw new RuntimeException("CPF já cadastrado");
+        } else {
+            log.info("CPF válido");
+        }
         repositorio.save(new Funcionario(dados));
         log.info("Funcionário cadastrado com sucesso!");
     }

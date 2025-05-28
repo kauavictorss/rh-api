@@ -1,8 +1,6 @@
 package rh.system.api.conta;
 
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Pattern;
+import jakarta.validation.constraints.*;
 
 public record DtoConta(
         @NotBlank
@@ -17,6 +15,7 @@ public record DtoConta(
         ContaTipo tipoConta,
 
         @NotNull
-        @Pattern(regexp = "\\d+(\\.\\d{1,2})?", message = "Salário deve ser um número válido")
+        @DecimalMin(value = "0.0", inclusive = false, message = "Salário deve ser maior que 0(zero)!")
+        @Digits(integer = 10, fraction = 2, message = "Salário pode ter no máximo duas casas decimais")
         Double salario) {
 }
