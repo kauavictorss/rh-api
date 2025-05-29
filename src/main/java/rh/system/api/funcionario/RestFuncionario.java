@@ -5,6 +5,7 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
+import rh.system.api.conta.ContaTipo;
 import rh.system.api.funcionario.dto.DtoAtualizarFuncionario;
 import rh.system.api.funcionario.dto.DtoCadastroFuncionario;
 import rh.system.api.funcionario.dto.DtoListaFuncionario;
@@ -18,23 +19,13 @@ import java.util.List;
 @RequestMapping("funcionarios")
 public class RestFuncionario {
 
+    private final ValidadorCadFuncionario validador;
     private final RepoFuncionario repositorio;
 
     @PostMapping("/cadastrar")
     public void cadastrar(@RequestBody @Valid DtoCadastroFuncionario dados) {
-        log.info("Cadastrando funcionário");
-        if (dados.idade() < 18) {
-            log.error("Erro ao cadastrar!");
-            throw new RuntimeException("Funcionário menor de idade");
-        } else {
-            log.info("Funcionário maior de idade");
-        }
-        if (repositorio.existsById(dados.cpf())) {
-            log.error("Erro ao cadastrar!");
-            throw new RuntimeException("CPF já cadastrado");
-        } else {
-            log.info("CPF válido");
-        }
+        log.info("Cadastrando funcionário: {}", dados);
+        validador.validarCadastro(dados);
         repositorio.save(new Funcionario(dados));
         log.info("Funcionário cadastrado com sucesso!");
     }
@@ -44,7 +35,7 @@ public class RestFuncionario {
         return repositorio.findAll().stream().map(DtoListaFuncionario::new).toList();
     }
 
-    @GetMapping("/listar/cpf/{cpf}")
+    @GetMapping("/cpf/{cpf}")
     public List<DtoListaFuncionario> buscarPorCpf(@PathVariable String cpf) {
         return repositorio.findById(cpf).stream().map(DtoListaFuncionario::new).toList();
     }
@@ -62,5 +53,14 @@ public class RestFuncionario {
     public void atualizarFuncionario(@RequestBody @Valid DtoAtualizarFuncionario dados) {
         var funcionario = repositorio.getReferenceById(dados.cpf());
         funcionario.atualizarDados(dados);
+    }
+
+    @GetMapping("/listar/conta/{tipoConta}")
+    public List<DtoListaFuncionario> listarFuncionariosPorTipoConta(@PathVariable String tipoConta) {
+        log.info("Listando funcionários por tipo de conta: {}", tipoConta);
+        return repositorio.buscarPorTipoConta(List.of(ContaTipo.valueOf(tipoConta)))
+            .stream()
+            .map(DtoListaFuncionario::new)
+            .toList();
     }
 }

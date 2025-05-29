@@ -9,6 +9,6 @@ import rh.system.api.funcionario.Funcionario;
 public record DtoListaFuncionario(String cpf, String nome, Integer idade, String email, Especialidade especialidade, ContaTipo tipoConta) {
 
     public DtoListaFuncionario(Funcionario funcionario) {
-        this(funcionario.getCpf(), funcionario.getNome(), funcionario.getIdade(), funcionario.getEmail(), funcionario.getEspecialidade(), null);
+        this(funcionario.getCpf(), funcionario.getNome(), funcionario.getIdade(), funcionario.getEmail(), funcionario.getEspecialidade(), funcionario.getConta().getTipoConta());
     }
 }
