@@ -4,6 +4,8 @@ import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.web.bind.annotation.*;
 import rh.system.api.conta.ContaTipo;
 import rh.system.api.funcionario.dto.DtoAtualizarFuncionario;
@@ -31,8 +33,8 @@ public class RestFuncionario {
     }
 
     @GetMapping("/listar")
-    public List<DtoListaFuncionario> listagemDeFuncionarios() {
-        return repositorio.findAll().stream().map(DtoListaFuncionario::new).toList();
+    public Page<DtoListaFuncionario> listagemDeFuncionarios(Pageable paginacao) {
+        return repositorio.findAll(paginacao).map(DtoListaFuncionario::new);
     }
 
     @GetMapping("/cpf/{cpf}")
@@ -48,13 +50,6 @@ public class RestFuncionario {
             .toList();
     }
 
-    @PutMapping("/atualizar")
-    @Transactional
-    public void atualizarFuncionario(@RequestBody @Valid DtoAtualizarFuncionario dados) {
-        var funcionario = repositorio.getReferenceById(dados.cpf());
-        funcionario.atualizarDados(dados);
-    }
-
     @GetMapping("/listar/conta/{tipoConta}")
     public List<DtoListaFuncionario> listarFuncionariosPorTipoConta(@PathVariable String tipoConta) {
         log.info("Listando funcionários por tipo de conta: {}", tipoConta);
@@ -62,5 +57,20 @@ public class RestFuncionario {
             .stream()
             .map(DtoListaFuncionario::new)
             .toList();
+    }
+
+    @PutMapping("/atualizar")
+    @Transactional
+    public void atualizarFuncionario(@RequestBody @Valid DtoAtualizarFuncionario dados) {
+        var funcionario = repositorio.getReferenceById(dados.cpf());
+        funcionario.atualizarDados(dados);
+    }
+
+    @DeleteMapping("/remover/{cpf}")
+    public void removerFuncionario(@PathVariable String cpf) {
+        log.info("Removendo funcionário com CPF: {}", cpf);
+        var funcionario = repositorio.getReferenceById(cpf);
+        funcionario.excuir();
+        log.info("Funcionário removido com sucesso!");
     }
 }

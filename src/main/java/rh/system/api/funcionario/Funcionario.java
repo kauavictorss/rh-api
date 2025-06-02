@@ -35,7 +35,10 @@ public class Funcionario {
     @Valid
     private Endereco endereco;
 
+    private Boolean ativo;
+
     public Funcionario(DtoCadastroFuncionario dados) {
+        this.ativo = true;
         this.cpf = dados.cpf();
         this.nome = dados.nome();
         this.idade = dados.idade();
@@ -64,5 +67,9 @@ public class Funcionario {
         if (dados.endereco() != null) {
             this.endereco.atualizarEndereco(dados.endereco());
         }
+    }
+
+    public void excuir() {
+        this.ativo = false;
     }
 }
