@@ -6,6 +6,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.web.bind.annotation.*;
 import rh.system.api.conta.ContaTipo;
 import rh.system.api.funcionario.dto.DtoAtualizarFuncionario;
@@ -33,8 +34,8 @@ public class RestFuncionario {
     }
 
     @GetMapping("/listar")
-    public Page<DtoListaFuncionario> listagemDeFuncionarios(Pageable paginacao) {
-        return repositorio.findAll(paginacao).map(DtoListaFuncionario::new);
+    public Page<DtoListaFuncionario> listagemDeFuncionarios(@PageableDefault(sort = "nome") Pageable paginacao) {
+        return repositorio.findAllByAtivo(paginacao).map(DtoListaFuncionario::new);
     }
 
     @GetMapping("/cpf/{cpf}")
@@ -67,6 +68,7 @@ public class RestFuncionario {
     }
 
     @DeleteMapping("/remover/{cpf}")
+    @Transactional
     public void removerFuncionario(@PathVariable String cpf) {
         log.info("Removendo funcionário com CPF: {}", cpf);
         var funcionario = repositorio.getReferenceById(cpf);
