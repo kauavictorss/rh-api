@@ -2,6 +2,7 @@ package rh.system.api.funcionario;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Range;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import rh.system.api.conta.ContaTipo;
@@ -16,6 +17,13 @@ public interface RepoFuncionario extends JpaRepository<Funcionario, String> {
         where f.ativo = true
         """)
     Page<Funcionario> findAllByAtivo(Pageable paginacao);
+
+    @Query("""
+        select f
+        from Funcionario f
+        where f.ativo = false
+        """)
+    Page<Funcionario> findAllByInativo(Pageable paginacao);
 
     @Query("""
         select f

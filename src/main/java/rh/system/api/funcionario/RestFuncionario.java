@@ -7,11 +7,14 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.util.UriComponentsBuilder;
 import rh.system.api.conta.ContaTipo;
 import rh.system.api.funcionario.dto.DtoAtualizarFuncionario;
 import rh.system.api.funcionario.dto.DtoCadastroFuncionario;
-import rh.system.api.funcionario.dto.DtoListaFuncionario;
+import rh.system.api.funcionario.dto.DtoDetalhamentoFuncionario;
+import rh.system.api.funcionario.dto.DtoListaFuncionarios;
 
 import java.util.List;
 
@@ -25,38 +28,50 @@ public class RestFuncionario {
     private final ValidadorCadFuncionario validador;
     private final RepoFuncionario repositorio;
 
-    @PostMapping("/cadastrar")
-    public void cadastrar(@RequestBody @Valid DtoCadastroFuncionario dados) {
+    @PostMapping
+    @Transactional
+    public ResponseEntity<DtoDetalhamentoFuncionario> cadastrar(@RequestBody @Valid DtoCadastroFuncionario dados, UriComponentsBuilder uriBuilder) {
         log.info("Cadastrando funcionário: {}", dados);
+
         validador.validarCadastro(dados);
-        repositorio.save(new Funcionario(dados));
+        var funcionario = new Funcionario(dados);
+        repositorio.save(funcionario);
+
+        var uri = uriBuilder.path("/funcionarios/{cpf}").buildAndExpand(funcionario.getCpf()).toUri();
+
         log.info("Funcionário cadastrado com sucesso!");
+        return ResponseEntity.created(uri).body(new DtoDetalhamentoFuncionario(funcionario));
     }
 
-    @GetMapping("/listar")
-    public Page<DtoListaFuncionario> listagemDeFuncionarios(@PageableDefault(sort = "nome") Pageable paginacao) {
-        return repositorio.findAllByAtivo(paginacao).map(DtoListaFuncionario::new);
+    @GetMapping("/listar/ativos")
+    public Page<DtoListaFuncionarios> listagemDeFuncionariosAtivos(@PageableDefault(sort = "nome") Pageable paginacao) {
+        return repositorio.findAllByAtivo(paginacao).map(DtoListaFuncionarios::new);
+    }
+
+    @GetMapping("/listar/inativos")
+    public Page<DtoListaFuncionarios>listaDeFuncionariosInativos(@PageableDefault(sort = "nome") Pageable paginacao) {
+        return repositorio.findAllByInativo(paginacao).map(DtoListaFuncionarios::new);
     }
 
     @GetMapping("/cpf/{cpf}")
-    public List<DtoListaFuncionario> buscarPorCpf(@PathVariable String cpf) {
-        return repositorio.findById(cpf).stream().map(DtoListaFuncionario::new).toList();
+    public List<DtoListaFuncionarios> buscarPorCpf(@PathVariable String cpf) {
+        return repositorio.findById(cpf).stream().map(DtoListaFuncionarios::new).toList();
     }
 
     @GetMapping("/listar/{especialidade}")
-    public List<DtoListaFuncionario> listarPorEspecialidade(@PathVariable String especialidade) {
+    public List<DtoListaFuncionarios> listarPorEspecialidade(@PathVariable String especialidade) {
         return repositorio.buscarPorEspecialidade(List.of(especialidade))
             .stream()
-            .map(DtoListaFuncionario::new)
+            .map(DtoListaFuncionarios::new)
             .toList();
     }
 
     @GetMapping("/listar/conta/{tipoConta}")
-    public List<DtoListaFuncionario> listarFuncionariosPorTipoConta(@PathVariable String tipoConta) {
+    public List<DtoListaFuncionarios> listarFuncionariosPorTipoConta(@PathVariable String tipoConta) {
         log.info("Listando funcionários por tipo de conta: {}", tipoConta);
         return repositorio.buscarPorTipoConta(List.of(ContaTipo.valueOf(tipoConta)))
             .stream()
-            .map(DtoListaFuncionario::new)
+            .map(DtoListaFuncionarios::new)
             .toList();
     }
 
