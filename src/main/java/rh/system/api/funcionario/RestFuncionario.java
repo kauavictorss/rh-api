@@ -11,10 +11,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.util.UriComponentsBuilder;
 import rh.system.api.conta.ContaTipo;
-import rh.system.api.funcionario.dto.DtoAtualizarFuncionario;
-import rh.system.api.funcionario.dto.DtoCadastroFuncionario;
-import rh.system.api.funcionario.dto.DtoDetalhamentoFuncionario;
-import rh.system.api.funcionario.dto.DtoListaFuncionarios;
+import rh.system.api.funcionario.dto.*;
 
 import java.util.List;
 
@@ -35,6 +32,7 @@ public class RestFuncionario {
 
         validador.validarCadastro(dados);
         var funcionario = new Funcionario(dados);
+        validador.ajustarSalarioSeProgramador(funcionario);
         repositorio.save(funcionario);
 
         var uri = uriBuilder.path("/funcionarios/{cpf}").buildAndExpand(funcionario.getCpf()).toUri();
@@ -58,6 +56,15 @@ public class RestFuncionario {
         return repositorio.findById(cpf).stream().map(DtoListaFuncionarios::new).toList();
     }
 
+    @GetMapping("/dados-conta/{cpf}")
+    public List<DtoDetalhamentoFuncionario> buscarDadosContaFuncionario(@PathVariable String cpf) {
+        log.info("Buscando dados da conta do funcionário com CPF: {}", cpf);
+        var funcionario = repositorio.findById(cpf);
+        return funcionario.stream()
+            .map(f -> new DtoDetalhamentoFuncionario(f.getCpf(), f.getNome(), f.getEspecialidade(), f.getConta()))
+            .toList();
+    }
+
     @GetMapping("/listar/{especialidade}")
     public List<DtoListaFuncionarios> listarPorEspecialidade(@PathVariable String especialidade) {
         return repositorio.buscarPorEspecialidade(List.of(especialidade))
@@ -77,17 +84,19 @@ public class RestFuncionario {
 
     @PutMapping("/atualizar")
     @Transactional
-    public void atualizarFuncionario(@RequestBody @Valid DtoAtualizarFuncionario dados) {
+    public ResponseEntity<DtoDetalhamentoFuncionario> atualizarFuncionario(@RequestBody @Valid DtoAtualizarFuncionario dados) {
         var funcionario = repositorio.getReferenceById(dados.cpf());
         funcionario.atualizarDados(dados);
+        return ResponseEntity.ok(new DtoDetalhamentoFuncionario(funcionario));
     }
 
     @DeleteMapping("/remover/{cpf}")
     @Transactional
-    public void removerFuncionario(@PathVariable String cpf) {
-        log.info("Removendo funcionário com CPF: {}", cpf);
+    public ResponseEntity<Void> removerFuncionario(@PathVariable String cpf) {
         var funcionario = repositorio.getReferenceById(cpf);
         funcionario.excuir();
+        log.info("Removendo funcionário(a) {} com CPF: {}",funcionario.getNome(), cpf);
         log.info("Funcionário removido com sucesso!");
+        return ResponseEntity.noContent().build();
     }
 }
