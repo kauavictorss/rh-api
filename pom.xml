@@ -8,10 +8,10 @@
 		<version>3.4.6</version>
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
-	<groupId>rh.system.api</groupId>
-	<artifactId>rh-system</artifactId>
+	<groupId>rh.api</groupId>
+	<artifactId>rh-api</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
-	<name>rh-system</name>
+	<name>rh-api</name>
 	<description>Project API Rest for Spring Boot</description>
 	<url/>
 	<licenses>

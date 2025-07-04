@@ -1,10 +1,13 @@
-package rh.system.api.funcionario;
+package rh.api.funcionario.service;
 
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
-import rh.system.api.funcionario.dto.DtoCadastroFuncionario;
+import rh.api.funcionario.RepoFuncionario;
+import rh.api.funcionario.dto.DtoCadastroFuncionario;
+import rh.api.funcionario.model.Especialidade;
+import rh.api.funcionario.model.Funcionario;
 
 @Component
 @Slf4j

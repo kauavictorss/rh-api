@@ -1,13 +1,13 @@
-package rh.system.api.funcionario.dto;
+package rh.api.funcionario.dto;
 
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;
-import rh.system.api.conta.DtoConta;
-import rh.system.api.endereco.DtoEndereco;
-import rh.system.api.funcionario.Especialidade;
+import rh.api.conta.DtoConta;
+import rh.api.endereco.DtoEndereco;
+import rh.api.funcionario.model.Especialidade;
 
 public record DtoCadastroFuncionario(
 

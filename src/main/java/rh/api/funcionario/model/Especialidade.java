@@ -1,4 +1,4 @@
-package rh.system.api.funcionario;
+package rh.api.funcionario.model;
 
 public enum Especialidade {
     PROGRAMACAO,

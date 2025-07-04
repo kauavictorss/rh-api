@@ -1,10 +1,10 @@
-package rh.system.api.funcionario.dto;
+package rh.api.funcionario.dto;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
-import rh.system.api.conta.Conta;
-import rh.system.api.endereco.Endereco;
-import rh.system.api.funcionario.Especialidade;
-import rh.system.api.funcionario.Funcionario;
+import rh.api.conta.Conta;
+import rh.api.endereco.Endereco;
+import rh.api.funcionario.model.Especialidade;
+import rh.api.funcionario.model.Funcionario;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public record DtoDetalhamentoFuncionario(String cpf, String nome, Integer idade, String email, Especialidade especialidade, Conta conta, Endereco endereco) {

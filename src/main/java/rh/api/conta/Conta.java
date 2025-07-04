@@ -1,4 +1,4 @@
-package rh.system.api.conta;
+package rh.api.conta;
 
 import jakarta.persistence.Embeddable;
 import jakarta.persistence.EnumType;

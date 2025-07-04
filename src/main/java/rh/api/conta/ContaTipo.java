@@ -1,4 +1,4 @@
-package rh.system.api.conta;
+package rh.api.conta;
 
 import lombok.Getter;
 
